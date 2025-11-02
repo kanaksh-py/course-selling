@@ -1,7 +1,3 @@
-// signup
-// sigin
-// purchases
-
 const { Router } = require("express");
 const { userModel, purchaseModel, courseModel } = require("../db");
 
@@ -56,5 +52,28 @@ userRouter.post("/signin",async function(req,res){
 })
 
 userRouter.get("/purchases",userMiddleware, async function(req, res){
-    
+    const userId = req.userId;
+
+    const purchases = await purchaseModel.find({
+        userId
+    })
+
+    let purchaseCourseId = []
+
+    for(let i= 0; i < purchaseCourseId.length; i++){
+        purchaseCourseId.push(purchases[i].courseId);
+    }
+
+    const courseData = await courseModel.find({
+        _id: { $in: purchaseCourseId } // will  take all the courses with the id mentioned in the purchasedCourseId
+    })
 })
+
+res.json({
+    purchases,
+    courseData
+})
+
+module.exports = {
+    userRouter: userRouter
+}
